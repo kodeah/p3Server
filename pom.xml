@@ -1,0 +1,821 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+<!-- === Usage: ===
+
+	Check / change the manual configuration part below when setting up your project.
+
+	To build the project faster, use the skip profile (mvn install -Pskip). That will skip unit testing and several
+	other steps, for example checking for dependency updates.
+
+-->
+
+<!-- === === === === === === === === === === === ========================== ===  === === === === === === === === === === -->
+<!-- === === === === === === === === === === === MANUAL CONFIGURATION BEGIN ===  === === === === === === === === === === -->
+<!-- === === === === === === === === === === === ========================== ===  === === === === === === === === === === -->
+
+
+	<!-- Maven central repository is the default
+	<repositories>
+		<repository>
+			<id>maven central</id>
+			<name>maven central</name>
+			<url>https://repo1.maven.org/maven2/</url>
+		</repository>
+	</repositories>
+	-->
+	<repositories>
+		<!-- Restlet: https://restlet.talend.com/downloads/current/ -->
+		<repository>
+			<id>maven-restlet</id>
+			<name>Restlet repository</name>
+			<url>https://maven.restlet.talend.com</url>
+		</repository>
+	</repositories>
+
+	<groupId>org.partyPartyPlaylist</groupId>
+	<artifactId>playlistServer</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<properties>
+
+		<enforced-maven-version>[3.6,)</enforced-maven-version>
+
+		<!-- Project license -->
+		<license.inceptionYear>2021</license.inceptionYear>
+		<license.organizationName>org.simple</license.organizationName>
+		<license.projectName>template</license.projectName>
+		<license.licenseName>mit</license.licenseName>
+			<!-- Note: When you base a project on this template which does not use the MIT license, make sure
+			to hint to this template and the MIT license for example in your projects README or so, to not violate
+			the license. -->
+
+		<!-- Build -->
+		<main-class>app.MAIN</main-class>
+		<!-- Use the following instead, if you want to use the java main class:
+		<main-class>helloJava.HelloJava</main-class>
+		-->
+		<kotlin.version>1.5.21</kotlin.version>
+		<java.version>16</java.version>
+		<maven.compiler.source>${java.version}</maven.compiler.source>
+		<maven.compiler.target>${java.version}</maven.compiler.target>
+		<maven.compiler.release>${java.version}</maven.compiler.release>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!-- Plugins -->
+		<maven-enforcer-plugin.version>3.0.0</maven-enforcer-plugin.version>
+		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+		<maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
+		<maven-site-plugin.version>3.9.1</maven-site-plugin.version>
+		<maven-install-plugin.version>2.5.2</maven-install-plugin.version>
+		<maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
+		<maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
+		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+		<maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
+		<maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
+		<exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
+		<versions-maven-plugin.version>2.8.1</versions-maven-plugin.version>
+		<license-maven-plugin.version>2.0.0</license-maven-plugin.version>
+		<maven-project-info-reports-plugin.version>3.1.2</maven-project-info-reports-plugin.version>
+		<dependency-check-maven.version>6.2.2</dependency-check-maven.version>
+		<maven-dependency-plugin.version>3.2.0</maven-dependency-plugin.version>
+		<!-- TODO: LINTING
+		<maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
+		<checkstyle.version>8.44</checkstyle.version>
+		-->
+
+		<!-- Dependencies -->
+		<!-- Note: Whenever changing the version of a dependency, check all <exclude> tags if they might be removed
+		 (if you remove one which shoudln't be remove, build will fail, so better remove too many than too few).-->
+		<junit.version>5.8.1</junit.version>
+		<junit-platform.version>1.8.1</junit-platform.version>
+		<mockk.version>1.12.0</mockk.version>
+		<mockito.version>4.0.0</mockito.version>
+		<restlet.version>2.4.3</restlet.version>
+		<owner.version>1.0.12</owner.version>
+
+
+<!-- === === === === === === === === === === === ======================== ===  === === === === === === === === === === -->
+<!-- === === === === === === === === === === === MANUAL CONFIGURATION END ===  === === === === === === === === === === -->
+<!-- === === === === === === === === === === === ======================== ===  === === === === === === === === === === -->
+
+
+		<!-- THE FOLLOWING PROPERTIES ARE SET AUTOMATICALLY BASED ON THE PROFILE -->
+		<!-- Profile based configuration -->
+		<skipProfileIsActive>false</skipProfileIsActive>
+		<skipWorkaroundCompilePhase>compile</skipWorkaroundCompilePhase>
+	</properties>
+
+
+	<profiles>
+		<profile>
+			<id>default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>skip</id>
+			<properties>
+				<skipProfileIsActive>true</skipProfileIsActive>
+				<skipWorkaroundCompilePhase>none</skipWorkaroundCompilePhase>
+				<!-- Credits: https://stackoverflow.com/questions/34664050/skip-execution-of-a-plugin-based-on-a-property -->
+			</properties>
+		</profile>
+	</profiles>
+
+
+	<dependencyManagement>
+		<!-- Note: Transitive dependencies are forbidden by the maven enforcer plugin's
+		"banTransitiveDependencies" rule in the "pluginManagement" section. Thus, all
+		dependencies exclude their dependencies via:
+		<exclusions>
+			<exclusion>
+				<groupId>*</groupId>
+				<artifactId>*</artifactId>
+			</exclusion>
+		</exclusions>
+		If you want to use sub dependencies, you have to include them explicitly (or disable
+		the enforcer rule / configure it to only throw warnings).
+		-->
+		<dependencies>
+
+			<dependency>
+				<groupId>org.restlet.jse</groupId>
+				<artifactId>org.restlet</artifactId>
+				<version>${restlet.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.aeonbits.owner</groupId>
+				<artifactId>owner</artifactId>
+				<version>${owner.version}</version>
+			</dependency>
+
+			<!-- Kotlin language support -->
+			<dependency>
+				<groupId>org.jetbrains.kotlin</groupId>
+				<artifactId>kotlin-stdlib</artifactId>
+				<version>${kotlin.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>*</groupId>
+						<artifactId>*</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<!-- Unit testing -->
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-engine</artifactId>
+				<version>${junit.version}</version>
+				<scope>test</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>*</groupId>
+						<artifactId>*</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-api</artifactId>
+				<version>${junit.version}</version>
+				<scope>test</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>*</groupId>
+						<artifactId>*</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-params</artifactId>
+				<version>${junit.version}</version>
+				<scope>test</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>*</groupId>
+						<artifactId>*</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.platform</groupId>
+				<artifactId>junit-platform-engine</artifactId>
+				<version>${junit-platform.version}</version>
+				<scope>test</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>*</groupId>
+						<artifactId>*</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.platform</groupId>
+				<artifactId>junit-platform-commons</artifactId>
+				<version>${junit-platform.version}</version>
+				<scope>test</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>*</groupId>
+						<artifactId>*</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<!-- TODO: The following is a workaround to prevent a warning, which would make the build fail with our
+			      configuration. (This is a dependency from jUnit5 it seems, we directly can depend on it to prevent
+			      the warning.)
+			See:
+				https://github.com/junit-team/junit5/issues/1065
+				https://github.com/junit-team/junit5/issues/1105
+				https://github.com/moditect/jfrunit/issues/72
+			-->
+			<dependency>
+				<groupId>org.apiguardian</groupId>
+				<artifactId>apiguardian-api</artifactId>
+				<version>1.0.0</version>
+			</dependency>
+
+			<dependency>
+				<groupId>io.mockk</groupId>
+				<artifactId>mockk</artifactId>
+				<version>${mockk.version}</version>
+				<scope>test</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>*</groupId>
+						<artifactId>*</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				<version>${mockito.version}</version>
+				<scope>test</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>*</groupId>
+						<artifactId>*</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
+
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.restlet.jse</groupId>
+			<artifactId>org.restlet</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.aeonbits.owner</groupId>
+			<artifactId>owner</artifactId>
+		</dependency>
+
+		<!-- Kotlin language support -->
+		<dependency>
+			<groupId>org.jetbrains.kotlin</groupId>
+			<artifactId>kotlin-stdlib</artifactId>
+		</dependency>
+
+		<!-- Unit testing -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-params</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-engine</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-commons</artifactId>
+		</dependency>
+		<!-- Workaround with jUnit5 (see above) -->
+		<dependency>
+			<groupId>org.apiguardian</groupId>
+			<artifactId>apiguardian-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.mockk</groupId>
+			<artifactId>mockk</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+		</dependency>
+
+	</dependencies>
+
+
+	<build>
+		<pluginManagement>
+			<plugins>
+
+				<!-- Enforce build prerequisites -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-enforcer-plugin</artifactId>
+					<version>${maven-enforcer-plugin.version}</version>
+					<configuration>
+						<fail>true</fail>
+					</configuration>
+					<executions>
+						<execution>
+							<id>enforce-versions</id>
+							<goals>
+								<goal>enforce</goal>
+							</goals>
+							<configuration>
+								<rules>
+									<requireMavenVersion>
+										<version>${enforced-maven-version}</version>
+									</requireMavenVersion>
+									<requireJavaVersion>
+										<version>${java.version}</version>
+									</requireJavaVersion>
+								</rules>
+							</configuration>
+						</execution>
+
+						<execution>
+							<id>Enforce dependency and plugin rules</id>
+							<goals>
+								<goal>enforce</goal>
+							</goals>
+							<configuration>
+								<skip>${skipProfileIsActive}</skip>
+								<rules>
+									<banDuplicatePomDependencyVersions>
+										<level>ERROR</level>
+									</banDuplicatePomDependencyVersions>
+
+									<banTransitiveDependencies>
+										<level>ERROR</level>
+									</banTransitiveDependencies>
+									<!-- Possible alternative to <banTransitiveDependencies>:
+									<dependencyConvergence/>
+									-->
+
+									<requireUpperBoundDeps> <!-- Might not be required, since build fails on outdated dependencies anyways... -->
+										<level>ERROR</level>
+									</requireUpperBoundDeps>
+									<requireReleaseDeps>
+										<message>No Snapshots Allowed!</message> <!-- Use <excludes> tag if a snapshot is required. -->
+										<level>ERROR</level>
+									</requireReleaseDeps>
+									<requirePluginVersions/>
+								</rules>
+							</configuration>
+						</execution>
+
+					</executions>
+				</plugin>
+
+				<!-- Check for new versions of dependency on build
+				Credits:
+				https://stackoverflow.com/questions/38146719/how-to-display-dependency-updates-only-for-release-versions
+				TODO: implement build failing on outdated dependencies
+				-->
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>versions-maven-plugin</artifactId>
+					<version>${versions-maven-plugin.version}</version>
+					<configuration>
+						<rulesUri>file:///${project.basedir}/rules.xml</rulesUri>
+					</configuration>
+					<executions>
+						<execution>
+							<phase>${skipWorkaroundCompilePhase}</phase>
+							<goals>
+								<goal>display-dependency-updates</goal>
+								<goal>display-plugin-updates</goal>
+								<goal>display-property-updates</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<!-- Generate a license file and package dependency licenses with the project -->
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>license-maven-plugin</artifactId>
+					<version>${license-maven-plugin.version}</version>
+					<configuration>
+						<failIfWarning>true</failIfWarning>
+						<skipAggregateDownloadLicenses>${skipProfileIsActive}</skipAggregateDownloadLicenses>
+						<skipAddThirdParty>${skipProfileIsActive}</skipAddThirdParty>
+						<skipUpdateProjectLicense>${skipProfileIsActive}</skipUpdateProjectLicense>
+					</configuration>
+					<executions>
+						<execution>
+							<id>aggregate-download-licenses</id>
+							<goals>
+								<goal>aggregate-download-licenses</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>add-third-party</id>
+							<goals>
+								<goal>add-third-party</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>update-project-license</id>
+							<goals>
+								<goal>update-project-license</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<!-- Docs -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-project-info-reports-plugin</artifactId>
+					<version>${maven-project-info-reports-plugin.version}</version>
+				</plugin>
+
+				<!-- Run jUnit5-Tests on build -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>${maven-surefire-plugin.version}</version>
+					<configuration>
+						<skip>${skipProfileIsActive}</skip>
+					</configuration>
+				</plugin>
+
+				<!-- Build -->
+				<plugin>
+					<groupId>org.jetbrains.kotlin</groupId>
+					<artifactId>kotlin-maven-plugin</artifactId>
+					<version>${kotlin.version}</version>
+					<configuration>
+
+						<nowarn>false</nowarn>
+						<args>
+
+							<!-- Configure fail on warning (kotlin) -->
+							<arg>-Werror</arg>
+
+							<!-- "In the progressive mode, deprecations and bug fixes for unstable code take effect
+							immediately, instead of going through a graceful migration cycle. Code written in the
+							progressive mode is backwards compatible; however, code written in a non-progressive mode
+							may cause compilation errors in the progressive mode."
+							from: https://kotlinlang.org/docs/compiler-reference.html#progressive -->
+							<arg>-progressive</arg>
+						</args>
+					</configuration>
+					<executions>
+						<execution>
+							<id>compile</id>
+							<goals>
+								<goal>compile</goal>
+							</goals>
+							<configuration>
+								<sourceDirs>
+									<sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
+									<sourceDir>${project.basedir}/src/main/java</sourceDir>
+								</sourceDirs>
+							</configuration>
+						</execution>
+						<execution>
+							<id>test-compile</id>
+							<goals> <goal>test-compile</goal> </goals>
+							<configuration>
+								<sourceDirs>
+									<sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
+									<sourceDir>${project.basedir}/src/test/java</sourceDir>
+								</sourceDirs>
+								<skip>${skipProfileIsActive}</skip>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${maven-compiler-plugin.version}</version>
+					<configuration>
+
+						<!-- Configure fail on warning (java) -->
+						<showWarnings>true</showWarnings>
+						<compilerArgs>
+							<arg>-Xlint:all</arg>
+							<arg>-Werror</arg>
+						</compilerArgs>
+					</configuration>
+					<executions>
+						<!-- Replacing default-compile as it is treated specially by maven -->
+						<execution>
+							<id>default-compile</id>
+							<phase>none</phase>
+						</execution>
+						<!-- Replacing default-testCompile as it is treated specially by maven -->
+						<execution>
+							<id>default-testCompile</id>
+							<phase>none</phase>
+						</execution>
+						<execution>
+							<id>java-compile</id>
+							<phase>compile</phase>
+							<goals>
+								<goal>compile</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>java-test-compile</id>
+							<phase>test-compile</phase>
+							<goals>
+								<goal>testCompile</goal>
+							</goals>
+							<configuration>
+								<skip>${skipProfileIsActive}</skip>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>${maven-resources-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>${maven-site-plugin.version}</version>
+					<configuration>
+						<skip>${skipProfileIsActive}</skip>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>${maven-install-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>${maven-deploy-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>${maven-clean-plugin.version}</version>
+					<executions>
+						<execution>
+							<id>auto-clean</id>
+							<phase>initialize</phase>
+							<goals>
+								<goal>clean</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<!-- Runnable jar output
+				Credits:
+				https://www.baeldung.com/executable-jar-with-maven
+				-->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId> <!-- Not explcitly used, but explicit version is required because of strict version checks -->
+					<version>${maven-jar-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>${maven-assembly-plugin.version}</version>
+					<executions>
+						<execution>
+							<phase>package</phase>
+							<goals>
+								<goal>single</goal>
+							</goals>
+							<configuration>
+								<archive>
+									<manifest>
+										<mainClass>
+											${main-class}
+										</mainClass>
+									</manifest>
+								</archive>
+								<descriptorRefs>
+									<descriptorRef>jar-with-dependencies</descriptorRef>
+								</descriptorRefs>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+
+				<!-- Run from maven -->
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>${exec-maven-plugin.version}</version>
+					<configuration>
+						<mainClass>${main-class}</mainClass>
+					</configuration>
+				</plugin>
+
+				<!-- Check for known vulnerabilities in dependendcies
+				https://nullbeans.com/how-to-identify-vulnerable-dependencies-in-a-maven-project/
+				TODO: This seems not to check transitive dependencies!
+				-->
+				<plugin>
+					<groupId>org.owasp</groupId>
+					<artifactId>dependency-check-maven</artifactId>
+					<version>${dependency-check-maven.version}</version>
+					<configuration>
+						<failBuildOnCVSS>0</failBuildOnCVSS>
+						<skip>${skipProfileIsActive}</skip>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>check</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>${maven-dependency-plugin.version}</version>
+					<configuration>
+						<skip>${skipProfileIsActive}</skip>
+					</configuration>
+					<executions>
+
+						<!-- Check for unused or undeclared dependencies -->
+						<execution>
+							<!-- "use the dependency:analyze-only goal instead when participating in the build lifecycle."
+							Source: https://maven.apache.org/plugins/maven-dependency-plugin/analyze-mojo.html -->
+							<id>analyze-only</id>
+							<goals>
+								<goal>analyze-only</goal>
+							</goals>
+							<configuration>
+								<failOnWarning>true</failOnWarning>
+								<ignoredDependencies>
+									<!-- These dependencies are not used, but already included for convenience. To prevent this
+									plugin from complaining, they are marked as ignored in the following. -->
+									<ignoredDependency>org.junit.jupiter:junit-jupiter-engine:jar:*</ignoredDependency>
+									<ignoredDependency>org.junit.jupiter:junit-jupiter-params:jar:*</ignoredDependency>
+									<ignoredDependency>org.junit.platform:junit-platform-engine:jar:*</ignoredDependency>
+									<ignoredDependency>org.junit.platform:junit-platform-commons:jar:*</ignoredDependency>
+									<ignoredDependency>io.mockk:mockk:jar:*</ignoredDependency>
+									<ignoredDependency>org.mockito:mockito-core:jar:*</ignoredDependency>
+									<!-- This dependency is required for a workaround (see <dependencies> tag): -->
+									<ignoredDependency>org.apiguardian:apiguardian-api:jar:*</ignoredDependency>
+								</ignoredDependencies>
+							</configuration>
+						</execution>
+
+						<!-- Check dependencyManagement for mismatches -->
+						<execution>
+							<id>analyze-dep-mgt</id>
+							<goals>
+								<goal>analyze-dep-mgt</goal>
+							</goals>
+							<configuration>
+								<failBuild>true</failBuild>
+								<ignoreDirect>false</ignoreDirect>
+							</configuration>
+						</execution>
+
+						<!-- Check the <dependencies/> and <dependencyManagement/> tags for duplicates -->
+						<execution>
+							<id>analyze-duplicate</id>
+							<phase>compile</phase>
+							<goals>
+								<goal>analyze-duplicate</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+			</plugins>
+		</pluginManagement>
+
+
+
+		<!-- Build steps -->
+		<plugins>
+
+			<!-- Enforce build prerequisites -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+			</plugin>
+
+			<!-- Check for new versions of dependency on build
+			Credits: https://stackoverflow.com/questions/38146719/how-to-display-dependency-updates-only-for-release-versions -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>versions-maven-plugin</artifactId>
+			</plugin>
+
+			<!-- Run jUnit5-Tests on build -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+
+			<!-- Build -->
+			<plugin>
+				<groupId>org.jetbrains.kotlin</groupId>
+				<artifactId>kotlin-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+			</plugin>
+
+			<!-- Runnable jar output -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+			</plugin>
+
+			<!-- Run from maven -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+			</plugin>
+
+		</plugins>
+	</build>
+
+
+	<reporting>
+		<plugins>
+
+			<!-- Docs -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+			</plugin>
+
+			<!-- Check for known vulnerabilities in dependendcies -->
+			<plugin>
+				<groupId>org.owasp</groupId>
+				<artifactId>dependency-check-maven</artifactId>
+			</plugin>
+
+			<!-- Generate a license file and package dependency licenses with the project -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+			</plugin>
+
+		</plugins>
+	</reporting>
+
+
+</project>
