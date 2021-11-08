@@ -281,10 +281,12 @@
 		</dependency>
 
 		<!-- Kotlin language support -->
+		<!-- Commented out, since not used
 		<dependency>
 			<groupId>org.jetbrains.kotlin</groupId>
 			<artifactId>kotlin-stdlib</artifactId>
 		</dependency>
+		-->
 
 		<!-- Unit testing -->
 		<dependency>
