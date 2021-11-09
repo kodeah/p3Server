@@ -35,7 +35,7 @@
 	</repositories>
 
 	<groupId>org.partyPartyPlaylist</groupId>
-	<artifactId>playlistServer</artifactId>
+	<artifactId>p3Server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
 	<properties>
