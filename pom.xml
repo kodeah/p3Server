@@ -44,8 +44,8 @@
 
 		<!-- Project license -->
 		<license.inceptionYear>2021</license.inceptionYear>
-		<license.organizationName>org.simple</license.organizationName>
-		<license.projectName>template</license.projectName>
+		<license.organizationName>${project.groupId}</license.organizationName>
+		<license.projectName>${project.artifactId}</license.projectName>
 		<license.licenseName>mit</license.licenseName>
 			<!-- Note: When you base a project on this template which does not use the MIT license, make sure
 			to hint to this template and the MIT license for example in your projects README or so, to not violate
