@@ -89,8 +89,14 @@ The currently playing song is skipped.
 ``GET /info/playlist``  
 Returns a string containing the current play queue.
 
-# Example usage with httpie:
+## Example usage with httpie:
 
 ``http GET localhost:6646/info/playlist``  
 ``http POST localhost:6646/commands/skip``  
 ``echo https://soundcloud.com/vague003/bobby-raps-and-corbin-welcome-to-the-hell-zone-vague003-remix | http POST localhost:6646/commands/downloadAndEnqueue``
+
+# = Regarding Security =
+
+This application does not support https, and thus should only be run in the local (trusted) network.
+
+Remote code execution might be possible by exploiting the download-and-enqueue command. At least I did not particularly take care that it is not. So once again, TAKE CARE THAT THIS SERVER IS NOT REACHABLE FROM AN UNTRUSTED NETWORK.
