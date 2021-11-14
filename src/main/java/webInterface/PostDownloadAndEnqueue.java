@@ -1,9 +1,8 @@
 package webInterface;
 
+import app.MAIN;
 import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
-
-import app.MAIN;
 
 public class PostDownloadAndEnqueue extends ServerResource {
 	
@@ -13,6 +12,7 @@ public class PostDownloadAndEnqueue extends ServerResource {
 	@Post
 	public void postMessage(String s) {
 		MAIN.getAppInstance().LOG_INSTANCE.log("Received command: Download and enqueue song at url '" + s + "'.");
-		MAIN.getAppInstance().getTaskInterface().downloadAndEnqueue(s);
+		MAIN.getAppInstance().TASK_INTERFACE.executeBackgroundTask(
+				MAIN.getAppInstance().ENQUEUE_TASK_FACTORY.create(s) );
 	}
 }

@@ -9,7 +9,6 @@ import utils.scripts.ScriptExecutionResult;
 import utils.scripts.ScriptExecutor;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -32,75 +31,74 @@ public class YoutubeDownloader {
 
 	public String downloadFromUrl(
 	        final String downloadUrl,
-            final String targetDirectory )
-    {
+            final String targetDirectory ) throws Exception {
 		// Returns the final path of the downloaded song.
-		
-		final Long tmpId = idGenerator.getFreeId();
-        final String dlTempDirPath =
-                tmpDirPath +
-				"/" + "partyPartyPlaylistServer_downloading_" + tmpId.toString();
 
-        new File(dlTempDirPath).mkdir();
+		final Long tmpId = idGenerator.getFreeId();
+		final String dlTempDirPath =
+				tmpDirPath +
+						"/" + "partyPartyPlaylistServer_downloading_" + tmpId.toString();
+
+		new File(dlTempDirPath).mkdir();
 		final Script dlScript = new ScriptBuilder()
-                .appendLine("youtube-dl",
-                        "--extract-audio",
-                        "--audio-format", "mp3",
-                        "--restrict-filenames",
-                        "--no-playlist",
-                        "-o", "%(title)s.%(ext)s",
-                        downloadUrl)
-                .toScript();
+				.appendLine("youtube-dl",
+						"--extract-audio",
+						"--audio-format", "mp3",
+						"--restrict-filenames",
+						"--no-playlist",
+						"-o", "%(title)s.%(ext)s",
+						downloadUrl)
+				.toScript();
 		ScriptExecutionResult dlScriptResult = new ScriptExecutor(dlTempDirPath, log).execute(dlScript);
 		log.log(dlScriptResult.output());
 		log.log(dlScriptResult.errors());
-		
+		if (!dlScriptResult.success()) {
+			throw new Exception("youtube-dl failed. See logs for details.");
+		}
+
 		//Then locate the downloaded file:
 		File dlTmpDir = new File(dlTempDirPath);
 		if (!dlTmpDir.isDirectory()) {
-			log.error("'" + dlTempDirPath + "' is not a directory!");
-			return null;
+			final String errorString = "Assuming temporary download directory at '" + dlTempDirPath + "', but it is not a directory!";
+			throw new Exception(errorString);
 		}
-		
+
 		File[] files = dlTmpDir.listFiles();
 		if (files.length != 1) {
-            log.error("'" + dlTempDirPath + "' should contain exactly" +
-					" one file, but has " + files.length + " files!");
+			final String errorString ="Temporary download directory at '" + dlTempDirPath + "' should contain exactly" +
+					" one file, but has " + files.length + " files!";
+			throw new Exception(errorString);
 		}
 		File songFile = files[0];
-		
-		try {
-			String songPathTmp = songFile.getCanonicalPath();
-			String songPathTarget = targetDirectory +
-					"/" + songFile.getName();
-			
-			//Move the file to the permanent storage location:
-			log.log("Moving song from '" + songPathTmp +
-					"' to '" + songPathTarget + "' (post dl script).");
-            Files.move(Path.of(songPathTmp), Path.of(songPathTarget));
 
-            final Script updateScript = new ScriptBuilder()
-                    .appendLine("mpc", "update")
-                    .toScript();
-			ScriptExecutionResult updateScriptResult = new ScriptExecutor(tmpDirPath, log).execute(updateScript);
-			log.log(updateScriptResult.output());
-			log.log(updateScriptResult.errors());
+		String songPathTmp = songFile.getCanonicalPath();
+		String songPathTarget = targetDirectory +
+				"/" + songFile.getName();
 
-            new File(dlTempDirPath).delete();
-			
-			File finalSongFile = new File(songPathTarget);
-			if (!finalSongFile.isFile()) {
-                log.error("Final downloaded song file not there!");
-				return null;
-			}
-			
-			return songPathTarget;
-			
-		} catch ( IOException e) {
-            log.error(e.getMessage());
-			e.printStackTrace();
-			return null;
+		//Move the file to the permanent storage location:
+		log.log("Moving song from '" + songPathTmp +
+				"' to '" + songPathTarget + "' (post dl script).");
+		Files.move(Path.of(songPathTmp), Path.of(songPathTarget));
+
+		final Script updateScript = new ScriptBuilder()
+				.appendLine("mpc", "update")
+				.toScript();
+		ScriptExecutionResult updateScriptResult = new ScriptExecutor(tmpDirPath, log).execute(updateScript);
+		log.log(updateScriptResult.output());
+		log.log(updateScriptResult.errors());
+		if(!updateScriptResult.success()) {
+			throw new Exception("'mpc update' failed.");
 		}
+
+		new File(dlTempDirPath).delete();
+
+		File finalSongFile = new File(songPathTarget);
+		if (!finalSongFile.isFile()) {
+			final String errorString = "Assuming downloaded song file at '" + songPathTarget + "', but it is not a file!";
+			throw new Exception(errorString);
+		}
+			
+		return songPathTarget;
 	}
 	
 }

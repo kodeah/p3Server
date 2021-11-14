@@ -1,11 +1,11 @@
 package webInterface;
 
-import java.util.Arrays;
-import java.util.HashSet;
-
 import org.restlet.Component;
 import org.restlet.data.Protocol;
 import org.restlet.service.CorsService;
+
+import java.util.Arrays;
+import java.util.HashSet;
 
 public class WebInterface {
 	

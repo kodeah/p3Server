@@ -17,8 +17,17 @@ public class MpcCommander {
 	}
 	
 	// Fires a command, blocking and waiting for return values.
-	public ScriptExecutionResult fireCommand (Script commandScript) {
-		return commandExecutor.execute(commandScript);
+	public String fireCommand (Script commandScript) throws Exception {
+		ScriptExecutionResult result = commandExecutor.execute(commandScript);
+		if (!result.success()) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Mpc command failed with error:\n");
+			sb.append(result.output());
+			sb.append(result.errors());
+			throw new Exception(sb.toString());
+		} else {
+			return result.output();
+		}
 	}
 	
 }

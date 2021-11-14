@@ -6,6 +6,7 @@ import utils.log.PrintLog;
 import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class YoutubeDownloaderTest {
 
@@ -30,10 +31,16 @@ public class YoutubeDownloaderTest {
 		songDir.mkdir();
 
 		// Perform tested action:
-		String target = ytdl.downloadFromUrl(
-				"https://soundcloud.com/mac-declos/lacchesi-mac-declos-give-it-to-me-nelly-x-rated-edit-1",
-				songDirPath
-				);
+		String target = null;
+		try {
+			target = ytdl.downloadFromUrl(
+					"https://soundcloud.com/mac-declos/lacchesi-mac-declos-give-it-to-me-nelly-x-rated-edit-1",
+					songDirPath
+					);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail();
+		}
 
 		// Check if test successful:
 		System.out.println(target);

@@ -1,37 +1,71 @@
 package app;
 
 import org.aeonbits.owner.ConfigFactory;
+import playback.INTERFACE_Playback;
+import playback.mpd.MpcPlaybackInterface;
+import storage.SongStore;
+import tasks.DownloadAndEnqueueTaskFactory;
+import tasks.TaskInterface;
+import utils.id.NaiveIdGenerator;
 import utils.log.ILog;
 import utils.log.Log;
 import webInterface.WebInterface;
 
+import java.io.File;
+
 
 public class App {
 
+	public final AppConfig CONFIG;
 	public final ILog LOG_INSTANCE;
+	public final TaskInterface TASK_INTERFACE;
+	public final INTERFACE_Playback PLAYBACK_INTERFACE;
+	public final DownloadAndEnqueueTaskFactory ENQUEUE_TASK_FACTORY;
 	
 	private WebInterface webInterface;
-	//Variable unused, but must be stored as long as the web services should run or the webservice might stop?
-	
-	private TaskInterface taskInterface;
+		//Variable unused, but must be stored as long as the web services should run or the webservice might stop?
+	private final SongStore songStore;
 	
 	public App() throws Exception {
 
-		AppConfig config = ConfigFactory.create( AppConfig.class );
+		CONFIG = ConfigFactory.create( AppConfig.class );
 
 		System.out.println(
 						"=== App started. Logs are written into: '"
-						+ config.logFilePath()
+						+ CONFIG.logFilePath()
 						+ "'. ===" );
-		LOG_INSTANCE = new Log(config.logFilePath());
+		LOG_INSTANCE = new Log(CONFIG.logFilePath());
 		LOG_INSTANCE.log("Starting up.");
 
-		taskInterface = new TaskInterface(config, LOG_INSTANCE);
-		webInterface = new WebInterface(config.portListen());
+		assertMusicLibraryDirExists();
+		assertMusicDlDirExists();
+
+		songStore = new SongStore(
+				CONFIG.musicLibraryDirectoryPath(),
+				CONFIG.musicDownloadDirectoryPath(),
+				new NaiveIdGenerator() );
+		PLAYBACK_INTERFACE = new MpcPlaybackInterface(CONFIG.tmpDirectoryPath(), songStore, LOG_INSTANCE);
+		TASK_INTERFACE = new TaskInterface();
+		ENQUEUE_TASK_FACTORY = new DownloadAndEnqueueTaskFactory(LOG_INSTANCE, CONFIG.tmpDirectoryPath(), songStore, PLAYBACK_INTERFACE);
+		webInterface = new WebInterface(CONFIG.portListen());
 	}
-	
-	public TaskInterface getTaskInterface() {
-		return taskInterface;
+
+	private void assertMusicLibraryDirExists() {
+		final File f = new File( CONFIG.musicLibraryDirectoryPath() );
+		if (!f.isDirectory()) {
+			LOG_INSTANCE.error("Expected music library at '" + CONFIG.musicLibraryDirectoryPath()
+					+ "', but there is no directory!");
+			throw new RuntimeException();
+		}
+	}
+
+	private void assertMusicDlDirExists() {
+		final File f = new File( CONFIG.musicDownloadDirectoryPath() );
+		if (!f.isDirectory()) {
+			LOG_INSTANCE.error("Expected music download directory at '" + CONFIG.musicDownloadDirectoryPath()
+					+ "', but there is no directory!");
+			throw new RuntimeException();
+		}
 	}
 	
 }

@@ -1,15 +1,13 @@
 package playback.mpd;
 
-import data.LocalSong;
 import playback.INTERFACE_Playback;
 import storage.SongStore;
 import utils.log.ILog;
 import utils.scripts.ScriptBuilder;
-import utils.scripts.ScriptExecutionResult;
 
 
 public class
-PLAYBACK_Mpd
+MpcPlaybackInterface
 implements
 INTERFACE_Playback
 {
@@ -18,7 +16,7 @@ INTERFACE_Playback
 	private final ILog log;
 	private final MpcCommander mpcCommander;
 
-	public PLAYBACK_Mpd(
+	public MpcPlaybackInterface(
 			final String temporaryBaseDirectory,
 			final SongStore songStore,
 			final ILog log
@@ -28,9 +26,8 @@ INTERFACE_Playback
 		this.mpcCommander = new MpcCommander(temporaryBaseDirectory, log);
 	}
 
-
 	@Override
-	public void toggleAutoplay(boolean enable) {
+	public void toggleAutoplay(boolean enable) throws Exception {
 		if (enable) {
 			mpcCommander.fireCommand(new ScriptBuilder()
 					.appendLine("mpc", "consume", "on")
@@ -44,21 +41,21 @@ INTERFACE_Playback
 	}
 
 	@Override
-	public void toggleAutoplay() {
+	public void toggleAutoplay() throws Exception {
 		mpcCommander.fireCommand(new ScriptBuilder()
 				.appendLine("mpc", "toggle")
 				.toScript() );
 	}
 
 	@Override
-	public void skip() {
+	public void skip() throws Exception {
 		mpcCommander.fireCommand(new ScriptBuilder()
 				.appendLine("mpc", "next")
 				.toScript() );
 	}
 
 	@Override
-	public void pullup() {
+	public void pullup() throws Exception {
 		mpcCommander.fireCommand(new ScriptBuilder()
 				.appendLine("mpc", "stop")
 				.appendLine("mpc", "play")
@@ -66,42 +63,33 @@ INTERFACE_Playback
 	}
 
 	@Override
-	public void insertSongLast(Long idSong) {
+	public void insertSongLast(Long idSong) throws Exception {
 		mpcCommander.fireCommand(new ScriptBuilder()
 				.appendLine("mpc", "update", "--wait")
 				.appendLine("sleep", "1.5")
-				.appendLine("mpc", "add", util_songPathFromId(idSong))
+				.appendLine("mpc", "add", songStore.getSongPathWithInnerDirPrefix(idSong))
 				.toScript() );
 	}
 	
 	@Override
-	public void insertSongNext(Long idSong) {
+	public void insertSongNext(Long idSong) throws Exception {
 		mpcCommander.fireCommand(new ScriptBuilder()
 				.appendLine("mpc", "update", "--wait")
 				.appendLine("sleep", "1.5")
-				.appendLine("mpc", "insert", util_songPathFromId(idSong))
+				.appendLine("mpc", "insert", songStore.getSongPathWithInnerDirPrefix(idSong))
 				.toScript() );
 	}
 
 	@Override
-	public String getPlaylistDescriptionString() {
-		final ScriptExecutionResult result = mpcCommander.fireCommand(new ScriptBuilder()
+	public String getPlaylistDescriptionString() throws Exception {
+		return mpcCommander.fireCommand(new ScriptBuilder()
 				.appendLine("mpc", "playlist")
 				.toScript() );
-		if( result.success() ) {
-			return result.output();
-		} else {
-			log.error("Error fetching playlist:");
-			log.error(result.errors());
-			return "";
-		}
 	}
 
-
-	private String util_songPathFromId(Long idSong) {
-		LocalSong song = songStore.getSongWithId(idSong);
-		String songPath = "file://" + song.getLocalPath();
-		return songPath;
+	@Override
+	public String getStatusString() {
+		throw new RuntimeException("getStatusString not implemented");
 	}
 
 }
