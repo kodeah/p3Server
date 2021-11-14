@@ -13,7 +13,7 @@ Note that there is no client available yet. However, you can use any HTTP client
 
 ## Easy Setup
 
-To install the prerequisites, build the project, as well as create a directory for logfiles inside ``/var/log``, you can simply run the ``installDebian.sh`` script. Note that it executes commands with sudo as well as downloads youtube-dl from the official youtube-dl site, which is **NOT part of the official debian repositories**. Only do this at your own risk!
+To install the prerequisites, build the project, as well as create a directory for logfiles inside ``/var/log``, you can simply run the ``install_debian.sh`` script. Note that it executes commands with sudo as well as downloads youtube-dl from the official youtube-dl site, which is **NOT part of the official debian repositories**. Only do this at your own risk!
 
 Now you can use ``mvn exec:java`` to start the application.
 
