@@ -9,5 +9,4 @@
 
 # IntelliJ IDEA
 .idea/
-template.iml
-playlistServer.iml
+*.iml
