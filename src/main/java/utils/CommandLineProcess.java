@@ -60,7 +60,7 @@ public class CommandLineProcess {
 
 	private void captureErrors() throws IOException {
 		BufferedReader reader =
-				new BufferedReader(new InputStreamReader(p.getInputStream()));
+				new BufferedReader(new InputStreamReader(p.getErrorStream()));
 		sbErrors = new StringBuilder();
 		String line = null;
 		while ( (line = reader.readLine()) != null) {
