@@ -401,7 +401,7 @@
 					<artifactId>versions-maven-plugin</artifactId>
 					<version>${versions-maven-plugin.version}</version>
 					<configuration>
-						<rulesUri>file:///${project.basedir}/rules.xml</rulesUri>
+						<rulesUri>file:///${project.basedir}/misc/mavenVersionPluginRules.xml</rulesUri>
 					</configuration>
 					<executions>
 						<execution>
