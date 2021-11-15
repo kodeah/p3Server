@@ -37,7 +37,7 @@ public class YoutubeDownloader {
 		final Long tmpId = idGenerator.getFreeId();
 		final String dlTempDirPath =
 				tmpDirPath +
-						"/" + "partyPartyPlaylistServer_downloading_" + tmpId.toString();
+						"/" + "p3Server_downloading_" + tmpId.toString();
 
 		new File(dlTempDirPath).mkdir();
 		final Script dlScript = new ScriptBuilder()

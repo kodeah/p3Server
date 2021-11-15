@@ -1,7 +1,7 @@
 
 # = Introduction =
 
-The partyPartyPlaylistServer is an extension to [MPD, the music player daemon](https://www.musicpd.org/), a "flexible, powerful, server-side application for playing music". While MPD is a quite good application for local music playback, the partyPartyPlaylistServer adds the ability to **append music from soundcloud, youtube and other (music) streaming platforms to your play queue**.
+The p3Server (party party playlist server) is an extension to [MPD, the music player daemon](https://www.musicpd.org/), a "flexible, powerful, server-side application for playing music". While MPD is a quite good application for local music playback, the p3Server adds the ability to **append music from soundcloud, youtube and other (music) streaming platforms to your play queue**.
 
 This application is intended to be executed parallel to a running MPD instance.
 
@@ -39,13 +39,13 @@ To build this app, run ``mvn install``. A runnable jar file is created in the ta
 
 ## Info: Logging
 
-Logs are written into ``/var/log/partyPartyPlaylist/partyPartyPlaylistServer.log`` by default. The directory has to exist and be writable by the user running this application, otherwise the application might crash. The logfile path is configurable, see below.
+Logs are written into ``/var/log/partyPartyPlaylist/p3Server.log`` by default. The directory has to exist and be writable by the user running this application, otherwise the application might crash. The logfile path is configurable, see below.
 
 # = Configuration =
 
 You can create a custom configuration file at one or both of the following paths:  
-``~/.config/partyPartyPlaylist/partyPartyPlaylistServer.config``  
-``/etc/partyPartyPlaylist/partyPartyPlaylistServer.config``
+``~/.config/partyPartyPlaylist/p3Server.config``  
+``/etc/partyPartyPlaylist/p3Server.config``
 
 If you create both files, the values in the user configuration (first path) have a higher priority than the ones in the global configuration (second path).
 
@@ -53,7 +53,7 @@ Note that no configuration file is created automatically.
 
 ## Available Configuration Keys And Default Values
 
-``logFilePath=/var/log/partyPartyPlaylist/partyPartyPlaylistServer.log``  
+``logFilePath=/var/log/partyPartyPlaylist/p3Server.log``  
 ``tmpDirectoryPath=/tmp``  
 ``musicLibraryDirectoryPath=/var/lib/mpd/music``  
 ``musicDownloadDirectoryPath=/var/lib/mpd/music/dl``  

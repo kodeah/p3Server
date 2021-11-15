@@ -4,13 +4,13 @@ import org.aeonbits.owner.Config;
 
 @Config.LoadPolicy(Config.LoadType.MERGE)
 @Config.Sources({
-        "file:~/.config/partyPartyPlaylist/partyPartyPlaylistServer.config",
-        "file:/etc/partyPartyPlaylist/partyPartyPlaylistServer.config"})
+        "file:~/.config/partyPartyPlaylist/p3Server.config",
+        "file:/etc/partyPartyPlaylist/p3Server.config"})
 public interface AppConfig extends Config {
     // Usage hints:
     // http://owner.aeonbits.org/docs/usage/
 
-    @DefaultValue("/var/log/partyPartyPlaylist/partyPartyPlaylistServer.log")
+    @DefaultValue("/var/log/partyPartyPlaylist/p3Server.log")
     String logFilePath();
 
     @DefaultValue("/tmp")
