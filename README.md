@@ -5,9 +5,8 @@ The p3Server (party party playlist server) is an extension to [MPD, the music pl
 
 This application is intended to be executed parallel to a running MPD instance.
 
-Note that there is no client available yet. However, you can use any HTTP client (httpie, curl, ...) to talk to the web interface (see below). Also feel free to write your own clients.
+At the moment, there is only an [Android Client](https://gitlab.com/kodeah/p3AndroidClient) available. However, you can use any HTTP client (httpie, curl, ...) to talk to the web interface (see below). Also feel free to write your own clients. I plan to release a desktop client as well soon.
 
-(I plan to release a desktop client as well as an Android application soon.)
 
 # = Build / Installation =
 
@@ -40,6 +39,7 @@ To build this app, run ``mvn install``. A runnable jar file is created in the ta
 ## Info: Logging
 
 Logs are written into ``/var/log/partyPartyPlaylist/p3Server.log`` by default. The directory has to exist and be writable by the user running this application, otherwise the application might crash. The logfile path is configurable, see below.
+
 
 # = Configuration =
 
@@ -86,14 +86,18 @@ Stops and then starts playback again, resulting in the current song being played
 ``POST /commands/skip``  
 The currently playing song is skipped.
 
-``GET /info/playlist``  
+``GET /info/playlist`` *(Deprecated)*  
 Returns a string containing the current play queue.
 
-## Example usage with httpie:
+
+# = Testing / Example Usage =
+
+To test the functionality of your installation, run for example the commands below. For that, [httpie](https://httpie.io/) has to be installed on your machine (``sudo apt install httpie``). 
 
 ``http GET localhost:6646/info/playlist``  
 ``http POST localhost:6646/commands/skip``  
 ``echo https://soundcloud.com/vague003/bobby-raps-and-corbin-welcome-to-the-hell-zone-vague003-remix | http POST localhost:6646/commands/downloadAndEnqueue``
+
 
 # = Regarding Security =
 
