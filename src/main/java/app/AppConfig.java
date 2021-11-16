@@ -19,7 +19,7 @@ public interface AppConfig extends Config {
     @DefaultValue("/var/lib/mpd/music")
     String musicLibraryDirectoryPath();
 
-    @DefaultValue("/var/lib/mpd/music/dl")
+    @DefaultValue("/var/lib/mpd/music/p3-cache")
     String musicDownloadDirectoryPath();
 
     @DefaultValue("6646")

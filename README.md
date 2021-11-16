@@ -56,7 +56,7 @@ Note that no configuration file is created automatically.
 ``logFilePath=/var/log/partyPartyPlaylist/p3Server.log``  
 ``tmpDirectoryPath=/tmp``  
 ``musicLibraryDirectoryPath=/var/lib/mpd/music``  
-``musicDownloadDirectoryPath=/var/lib/mpd/music/dl``  
+``musicDownloadDirectoryPath=/var/lib/mpd/music/p3-cache``  
 ``portListen=6646``
 
 To change any of these values, simply create a custom configuration file at one of the paths stated above and add key-value pairs for all values that you want to overwrite.
