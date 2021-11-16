@@ -8,36 +8,53 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class CommandLineProcess {
-	
+
+	private final static long LOG_THREAD_INTERVAL = 100;
+
+	private final StringBuilder sbOutput = new StringBuilder();
+	private final StringBuilder sbErrors = new StringBuilder();
+	private final boolean logOutput;
+	private final boolean logErrors;
+
 	private Process p;
-	private StringBuilder sbOutput;
-	private StringBuilder sbErrors;
 	private int exitValue = -1;
+	private Thread logThread;
+	private final ILog log;
+	private boolean processFinished = false;
+
 	public
 	CommandLineProcess(
 			final String[] commandWithParams,
 			final String executionDirectory,
 			final boolean waitFor,
-			final boolean captureOutput,
-			final boolean captureErrors,
+			final boolean logOutput,
+			final boolean logErrors,
 			final ILog log )
 	{
-		ProcessBuilder pb = new ProcessBuilder(commandWithParams);
-		 pb.directory(new File(executionDirectory));
-		 try {
-			 p = pb.start();
+		this.logOutput = logOutput;
+		this.logErrors = logErrors;
+		this.log = log;
 
-			 if (waitFor) {
-				 p.waitFor();
-				 this.exitValue = p.exitValue();
-			 }
-			 if (captureOutput) {
-				 captureOutput();
-			 }
-			 if (captureErrors) {
-				 captureErrors();
-			 }
+		final ProcessBuilder pb = new ProcessBuilder(commandWithParams);
+		pb.directory(new File(executionDirectory));
+		try {
+			p = pb.start();
+			logThread = new Thread( ()-> {
+				try {
+					captureOutputAndErrors();
+				} catch (Exception e) {
+					log.except( "CommandLineProcess: Cannot capture output and errors because of an exception.", e );
+					e.printStackTrace();
+				}
+			});
+			logThread.start();
 
+			if (waitFor) {
+				p.waitFor();
+				processFinished = true;
+				logThread.join();
+				this.exitValue = p.exitValue();
+			}
 		} catch (IOException e) {
 			log.error(e.getMessage());
 			e.printStackTrace();
@@ -47,25 +64,35 @@ public class CommandLineProcess {
 		}
 	}
 
-	private void captureOutput() throws IOException {
-		BufferedReader reader =
+	private void captureOutputAndErrors() throws IOException, InterruptedException {
+		BufferedReader readerOutput =
 				new BufferedReader(new InputStreamReader(p.getInputStream()));
-		sbOutput = new StringBuilder();
-		String line = null;
-		while ( (line = reader.readLine()) != null) {
-			sbOutput.append(line);
-			sbOutput.append(System.getProperty("line.separator"));
-		}
-	}
-
-	private void captureErrors() throws IOException {
-		BufferedReader reader =
+		String lineOutput;
+		BufferedReader readerErrors =
 				new BufferedReader(new InputStreamReader(p.getErrorStream()));
-		sbErrors = new StringBuilder();
-		String line = null;
-		while ( (line = reader.readLine()) != null) {
-			sbErrors.append(line);
-			sbErrors.append(System.getProperty("line.separator"));
+		String lineErrors;
+
+		boolean processFinishedBefore;
+		while( true ){
+			processFinishedBefore = processFinished;
+			while ((lineOutput = readerOutput.readLine()) != null) {
+				sbOutput.append(lineOutput);
+				sbOutput.append(System.getProperty("line.separator"));
+				if (logOutput) {
+					log.log(lineOutput);
+				}
+			}
+			while ((lineErrors = readerErrors.readLine()) != null) {
+				sbErrors.append(lineErrors);
+				sbErrors.append(System.getProperty("line.separator"));
+				if (logErrors) {
+					log.error(lineErrors);
+				}
+			}
+			if(processFinishedBefore) {
+				break;
+			}
+			Thread.sleep( LOG_THREAD_INTERVAL );
 		}
 	}
 
@@ -80,5 +107,5 @@ public class CommandLineProcess {
 	public boolean didTerminateNormally() {
 		return exitValue == 0;
 	}
-	
+
 }

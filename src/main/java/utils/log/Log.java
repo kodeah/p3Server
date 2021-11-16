@@ -32,7 +32,17 @@ public class Log implements ILog {
 		String log = "[ERROR:] " + message;
 		output(log);
 	}
-	
+
+	@Override
+	public void except(Exception e) {
+		error( e.getMessage() );
+	}
+
+	@Override
+	public void except(String message, Exception e) {
+		error( message + System.lineSeparator() + e.getMessage() );
+	}
+
 	private void output(String message) {
 		System.out.println(message);
 		if (logFilePath != null) {
