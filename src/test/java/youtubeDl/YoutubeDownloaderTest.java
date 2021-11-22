@@ -14,7 +14,8 @@ public class YoutubeDownloaderTest {
 	public void test() {
 		YoutubeDownloader ytdl = new YoutubeDownloader(
 				"/tmp",
-				new PrintLog() );
+				new PrintLog(),
+				false );
 
 		final String songDirPath = "/tmp/youtubeDlTest83745643747";
 

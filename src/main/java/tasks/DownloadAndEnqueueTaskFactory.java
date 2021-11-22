@@ -21,7 +21,7 @@ public class DownloadAndEnqueueTaskFactory {
         this.log = log;
         this.downloadStore = downloadStore;
         this.playbackInterface = playbackInterface;
-        youtubeDownloader = new YoutubeDownloader(tmpDirPath, log);
+        youtubeDownloader = new YoutubeDownloader(tmpDirPath, log, true);
     }
 
     public Task create( final String downloadUrl ) {
