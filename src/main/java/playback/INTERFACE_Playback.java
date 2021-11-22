@@ -3,6 +3,8 @@ package playback;
 
 public interface INTERFACE_Playback {
 
+	public void verifyIsUp() throws Exception;
+
 	public void toggleAutoplay(final boolean enable) throws Exception;
 	public void toggleAutoplay() throws Exception;
 	

@@ -44,7 +44,10 @@ public class App {
 				CONFIG.mpdMusicLibraryDirectoryPath(),
 				CONFIG.mpdMusicDownloadDirectoryPath(),
 				new NaiveIdGenerator() );
+
 		PLAYBACK_INTERFACE = new MpcPlaybackInterface(CONFIG.tmpDirectoryPath(), songStore, LOG_INSTANCE);
+		PLAYBACK_INTERFACE.verifyIsUp();
+
 		TASK_INTERFACE = new TaskInterface();
 		ENQUEUE_TASK_FACTORY = new DownloadAndEnqueueTaskFactory(LOG_INSTANCE, CONFIG.tmpDirectoryPath(), songStore, PLAYBACK_INTERFACE);
 		webInterface = new WebInterface(CONFIG.portListen());

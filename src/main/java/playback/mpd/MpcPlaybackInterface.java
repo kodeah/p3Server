@@ -27,6 +27,20 @@ INTERFACE_Playback
 	}
 
 	@Override
+	public void verifyIsUp() throws Exception {
+		log.log("Check if MPD is up and reachable via http ...");
+		try {
+			mpcCommander.fireCommand(new ScriptBuilder()
+					.appendLine("mpc")
+					.toScript() );
+		} catch (Exception e) {
+			log.log("MPD is not up or not reachable:");
+			throw e;
+		}
+		log.log("MPD is up and reachable.");
+	}
+
+	@Override
 	public void toggleAutoplay(boolean enable) throws Exception {
 		if (enable) {
 			mpcCommander.fireCommand(new ScriptBuilder()
