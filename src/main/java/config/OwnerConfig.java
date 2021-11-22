@@ -9,6 +9,12 @@ public interface OwnerConfig extends Config {
     // Usage hints:
     // http://owner.aeonbits.org/docs/usage/
 
+    // Note that parts which do not start with "/" are treated as local paths inside the home directory of the user
+    // that runs this application.
+    // Example:
+    //  "/tmp/xyz" is also treated as "/tmp/xyz"
+    //  "tmp/xyz" is treated as "/home/<username>/tmp/xyz"
+
     // Global configuration:
     @DefaultValue("6646")
     int portListen();
