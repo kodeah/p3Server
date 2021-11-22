@@ -4,8 +4,7 @@ import org.aeonbits.owner.Config;
 
 @Config.LoadPolicy(Config.LoadType.MERGE)
 @Config.Sources({
-        "file:~/.config/partyPartyPlaylist/p3Server.config",
-        "file:/etc/partyPartyPlaylist/p3Server.config"})
+        "file:~/.config/partyPartyPlaylist/p3Server.config"})
 public interface AppConfig extends Config {
     // Usage hints:
     // http://owner.aeonbits.org/docs/usage/
