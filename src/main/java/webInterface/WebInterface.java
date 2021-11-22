@@ -18,6 +18,7 @@ public class WebInterface {
 	    // Create a new Restlet component and add a HTTP server connector to it
 	    Component component = new Component();
 	    component.getServers().add(Protocol.HTTP, portListen);
+	    component.getClients().add(Protocol.HTTP);
 	    
 	    component.getServices().add(corsService);
 

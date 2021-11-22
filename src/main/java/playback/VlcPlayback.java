@@ -1,18 +1,18 @@
 package playback;
 
-import storage.SongStoreForMpd;
+import storage.ISongStore;
 import utils.WebRequestHelper;
 import utils.log.ILog;
 
 public class VlcPlayback implements INTERFACE_Playback {
 
     private final WebRequestHelper webRequestHelper;
-    private final SongStoreForMpd songStore;
+    private final ISongStore songStore;
     private final ILog log;
 
     public VlcPlayback(
             final WebRequestHelper webRequestHelper,
-            final SongStoreForMpd songStore,
+            final ISongStore songStore,
             final ILog log )
     {
         this.webRequestHelper = webRequestHelper;
@@ -35,10 +35,10 @@ public class VlcPlayback implements INTERFACE_Playback {
     @Override
     public void toggleAutoplay( final boolean enable ) throws Exception {
         if (enable) {
-            webRequestHelper.sendCommand("/requests/status.xml?command=pl_play");
-            webRequestHelper.sendCommand("/requests/status.xml?command=pl_loop");
+            webRequestHelper.get("/requests/status.xml?command=pl_play");
+            webRequestHelper.get("/requests/status.xml?command=pl_loop");
         } else {
-            webRequestHelper.sendCommand("/requests/status.xml?command=pl_pause");
+            webRequestHelper.get("/requests/status.xml?command=pl_pause");
         }
     }
 
@@ -50,20 +50,20 @@ public class VlcPlayback implements INTERFACE_Playback {
 
     @Override
     public void skip() throws Exception {
-        webRequestHelper.sendCommand("/requests/status.xml?command=pl_next");
+        webRequestHelper.get("/requests/status.xml?command=pl_next");
     }
 
     @Override
     public void pullup() throws Exception {
-        webRequestHelper.sendCommand("/requests/status.xml?command=pl_stop");
-        webRequestHelper.sendCommand("/requests/status.xml?command=pl_play");
+        webRequestHelper.get("/requests/status.xml?command=pl_stop");
+        webRequestHelper.get("/requests/status.xml?command=pl_play");
     }
 
     @Override
     public void insertSongLast( final Long idSong ) throws Exception {
-        String songPath = songStore.getSongWithId(idSong).localPath();
+        String songPath = songStore.getSongPath( idSong );
         log.log("Adding local file: " + songPath);
-        webRequestHelper.sendCommand("/requests/status.xml?command=in_enqueue&input=" + songPath);
+        webRequestHelper.get("/requests/status.xml?command=in_enqueue&input=" + songPath);
     }
 
     @Override
@@ -76,14 +76,14 @@ public class VlcPlayback implements INTERFACE_Playback {
     public String getPlaylistDescriptionString()
             throws Exception
     {
-        return webRequestHelper.query("/requests/playlist.xml");
+        return webRequestHelper.get("/requests/playlist.xml");
     }
 
 
     public String getStatusString()
             throws Exception
     {
-        return webRequestHelper.query("/requests/status.xml");
+        return webRequestHelper.get("/requests/status.xml");
     }
 
 }

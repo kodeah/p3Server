@@ -29,13 +29,13 @@ public class WebRequestHelper {
         this.basicAuthPassword = password;
     }
 
-    public void sendCommand(
+    public void post(
             String cmdString
     ) {
-        sendCommand(cmdString, "");
+        post(cmdString, "");
     }
 
-    public void sendCommand(
+    public void post(
             String cmdString,
             String payload
     ) {
@@ -47,7 +47,7 @@ public class WebRequestHelper {
         resource.post( payload );
     }
 
-    public String query(
+    public String get(
             String cmdString
     ) throws Exception
     {

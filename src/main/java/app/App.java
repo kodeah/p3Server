@@ -6,6 +6,7 @@ import org.aeonbits.owner.ConfigFactory;
 import playback.INTERFACE_Playback;
 import tasks.DownloadAndEnqueueTaskFactory;
 import tasks.TaskInterface;
+import utils.WebRequestHelper;
 import utils.log.ILog;
 import utils.log.Log;
 import webInterface.WebInterface;
@@ -39,11 +40,31 @@ public class App {
 		assertMpdMusicLibraryDirExists();
 		assertMpdMusicDlDirExists();
 
-		final AppParts appParts = new AppPartsForMpd(
-				ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.tmpDirectoryPath() ),
-				ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.mpdMusicLibraryDirectoryPath() ),
-				ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.mpdMusicDownloadDirectoryPath() ),
-				LOG_INSTANCE );
+		final AppParts appParts;
+		final String playbackMode = config.playbackInterface();
+		final String downloadTargetDir;
+		switch (playbackMode) {
+			case "mpd":
+				downloadTargetDir = ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.mpdMusicDownloadDirectoryPath() );
+				appParts = new AppPartsForMpd(
+						ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.tmpDirectoryPath() ),
+						ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.mpdMusicLibraryDirectoryPath() ),
+						downloadTargetDir,
+						LOG_INSTANCE );
+				break;
+			case "vlc":
+				downloadTargetDir = ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.vlcMusicDownloadDirectoryPath() );
+				appParts = new AppPartsForVlc(
+						new WebRequestHelper(
+								config.vlcHttpInterfaceHost(),
+								config.vlcHttpInterfacePort(),
+								"",
+								config.vlcHttpInterfacePassword() ),
+						LOG_INSTANCE );
+				break;
+			default:
+				throw new Exception("Invalid plaback interface configuration (possible are 'mpd' or 'vlc'): " + playbackMode);
+		}
 
 		PLAYBACK_INTERFACE = appParts.getPlaybackInterface();
 		PLAYBACK_INTERFACE.verifyIsUp();
@@ -52,11 +73,10 @@ public class App {
 		ENQUEUE_TASK_FACTORY = new DownloadAndEnqueueTaskFactory(
 				LOG_INSTANCE,
 				ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.tmpDirectoryPath() ),
+				downloadTargetDir,
 				appParts.getSongStore(),
-				PLAYBACK_INTERFACE,
-				ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.mpdMusicDownloadDirectoryPath() ) );
+				PLAYBACK_INTERFACE );
 		webInterface = new WebInterface( config.portListen() );
-
 	}
 
 	private void assertMpdMusicLibraryDirExists() {

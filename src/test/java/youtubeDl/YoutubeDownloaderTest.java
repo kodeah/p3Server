@@ -12,12 +12,13 @@ public class YoutubeDownloaderTest {
 
 	@Test
 	public void test() {
-		YoutubeDownloader ytdl = new YoutubeDownloader(
-				"/tmp",
-				new PrintLog(),
-				false );
 
 		final String songDirPath = "/tmp/youtubeDlTest83745643747";
+
+		YoutubeDownloader ytdl = new YoutubeDownloader(
+				"/tmp",
+				songDirPath,
+				new PrintLog() );
 
 		// Prepare/clean output folder:
 		final File songFile = new File(songDirPath + "/Lacchesi_Mac_Declos_-_Give_It_To_Me_Nelly_X-Rated_Edit.mp3");
@@ -35,9 +36,7 @@ public class YoutubeDownloaderTest {
 		String target = null;
 		try {
 			target = ytdl.downloadFromUrl(
-					"https://soundcloud.com/mac-declos/lacchesi-mac-declos-give-it-to-me-nelly-x-rated-edit-1",
-					songDirPath
-					);
+					"https://soundcloud.com/mac-declos/lacchesi-mac-declos-give-it-to-me-nelly-x-rated-edit-1" );
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail();

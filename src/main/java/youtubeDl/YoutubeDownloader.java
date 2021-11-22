@@ -15,6 +15,7 @@ import java.nio.file.Path;
 public class YoutubeDownloader {
 
 	private final String tmpDirPath;
+	private final String dlTargetDirPath;
     private final ILog log;
 	
 	private final IdGenerator idGenerator = new NaiveIdGenerator();
@@ -23,16 +24,18 @@ public class YoutubeDownloader {
 	
 	public YoutubeDownloader(
 	        final String tmpDirPath,
-            final ILog log,
-			final boolean runMpcUpdate )
+            final String dlTargetDirPath,
+            final ILog log )
     {
 		this.tmpDirPath = tmpDirPath;
+		this.dlTargetDirPath = dlTargetDirPath;
         this.log = log;
 	}
 
 	public String downloadFromUrl(
-	        final String downloadUrl,
-            final String targetDirectory ) throws Exception {
+	        final String downloadUrl )
+			throws Exception
+	{
 		// Returns the final path of the downloaded song.
 
 		final Long tmpId = idGenerator.getFreeId();
@@ -73,7 +76,7 @@ public class YoutubeDownloader {
 		File songFile = files[0];
 
 		String songPathTmp = songFile.getCanonicalPath();
-		String songPathTarget = targetDirectory +
+		String songPathTarget = dlTargetDirPath +
 				"/" + songFile.getName();
 
 		//Move the file to the permanent storage location:

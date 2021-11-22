@@ -16,15 +16,15 @@ public class DownloadAndEnqueueTaskFactory {
     public DownloadAndEnqueueTaskFactory(
             final ILog log,
             final String tmpDirPath,
+            final String downloadDirPath,
             final ISongStore downloadStore,
-            final INTERFACE_Playback playbackInterface,
-            final String downloadDirPath )
+            final INTERFACE_Playback playbackInterface )
     {
         this.log = log;
         this.downloadStore = downloadStore;
         this.downloadDirPath = downloadDirPath;
         this.playbackInterface = playbackInterface;
-        youtubeDownloader = new YoutubeDownloader(tmpDirPath, log, true);
+        youtubeDownloader = new YoutubeDownloader(tmpDirPath, downloadDirPath, log);
     }
 
     public Task create( final String downloadUrl ) {
@@ -34,7 +34,7 @@ public class DownloadAndEnqueueTaskFactory {
                     log.log("Starting download and enqueue task.");
                     statusStringUpdateDelegate.updateStatusString("Downloading ...");
                     String songPath = youtubeDownloader
-                            .downloadFromUrl(downloadUrl, downloadDirPath);
+                            .downloadFromUrl( downloadUrl );
                     log.log("Downloaded song. Adding it to store and enqueuing now. Song path: " + songPath);
 
                     statusStringUpdateDelegate.updateStatusString("Adding song to song store ...");

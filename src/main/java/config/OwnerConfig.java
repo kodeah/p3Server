@@ -17,6 +17,22 @@ public interface OwnerConfig extends Config {
     @DefaultValue("/tmp")
     String tmpDirectoryPath();
 
+    // Select playback interface
+    @DefaultValue("mpd")
+    String playbackInterface();
+        // Possible values are: "mpd", "vlc"
+        // Depending on which one you set, from the following values only the ones prefixed with mpd/vlc are used
+
+    // VLC specific configuration:
+    @DefaultValue("Downloads/p3-cache")
+    String vlcMusicDownloadDirectoryPath();
+    @DefaultValue("localhost")
+    String vlcHttpInterfaceHost();
+    @DefaultValue("8080")
+    int vlcHttpInterfacePort();
+    @DefaultValue("0000")
+    String vlcHttpInterfacePassword();
+
     // MPD specific configuration:
     @DefaultValue("/var/lib/mpd/music")
     String mpdMusicLibraryDirectoryPath();

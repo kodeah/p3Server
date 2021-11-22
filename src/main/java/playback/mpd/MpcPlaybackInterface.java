@@ -1,7 +1,7 @@
 package playback.mpd;
 
 import playback.INTERFACE_Playback;
-import storage.SongStoreForMpd;
+import storage.ISongStore;
 import utils.log.ILog;
 import utils.scripts.ScriptBuilder;
 
@@ -12,13 +12,13 @@ implements
 INTERFACE_Playback
 {
 
-	private final SongStoreForMpd songStore;
+	private final ISongStore songStore;
 	private final ILog log;
 	private final MpcCommander mpcCommander;
 
 	public MpcPlaybackInterface(
 			final String scriptExecutionDir,
-			final SongStoreForMpd songStore,
+			final ISongStore songStore,
 			final ILog log
 			) {
 		this.log = log;
