@@ -24,7 +24,7 @@ public interface OwnerConfig extends Config {
     String tmpDirectoryPath();
 
     // Select playback interface
-    @DefaultValue("mpd")
+    @DefaultValue("vlc")
     String playbackInterface();
         // Possible values are: "mpd", "vlc"
         // Depending on which one you set, from the following values only the ones prefixed with mpd/vlc are used
