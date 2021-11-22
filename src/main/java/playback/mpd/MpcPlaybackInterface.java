@@ -17,13 +17,13 @@ INTERFACE_Playback
 	private final MpcCommander mpcCommander;
 
 	public MpcPlaybackInterface(
-			final String temporaryBaseDirectory,
+			final String scriptExecutionDir,
 			final SongStoreForMpd songStore,
 			final ILog log
 			) {
 		this.log = log;
 		this.songStore = songStore;
-		this.mpcCommander = new MpcCommander(temporaryBaseDirectory, log);
+		this.mpcCommander = new MpcCommander(scriptExecutionDir, log);
 	}
 
 	@Override

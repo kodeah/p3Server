@@ -1,6 +1,7 @@
 package storage;
 
 import utils.id.IdGenerator;
+import utils.id.NaiveIdGenerator;
 import utils.log.ILog;
 import utils.scripts.Script;
 import utils.scripts.ScriptBuilder;
@@ -20,7 +21,6 @@ public class SongStoreForMpd implements ISongStore {
 
 	public SongStoreForMpd(final String musicLibPath,
 						   final String dlDirPath,
-						   final IdGenerator idGenerator,
 						   final ILog log )
 	{
 		this.log = log;
@@ -30,7 +30,7 @@ public class SongStoreForMpd implements ISongStore {
 			this.musicLibPath = musicLibPath + "/";
 		}
 		this.dlDirPath = dlDirPath;
-		this.idGenerator = idGenerator;
+		idGenerator = new NaiveIdGenerator();
 	}
 
 	@Override

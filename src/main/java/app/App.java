@@ -4,12 +4,8 @@ import config.ConfigPathUtil;
 import config.OwnerConfig;
 import org.aeonbits.owner.ConfigFactory;
 import playback.INTERFACE_Playback;
-import playback.mpd.MpcPlaybackInterface;
-import storage.ISongStore;
-import storage.SongStoreForMpd;
 import tasks.DownloadAndEnqueueTaskFactory;
 import tasks.TaskInterface;
-import utils.id.NaiveIdGenerator;
 import utils.log.ILog;
 import utils.log.Log;
 import webInterface.WebInterface;
@@ -27,7 +23,6 @@ public class App {
 	private final OwnerConfig config;
 	private WebInterface webInterface;
 		//Variable unused, but must be stored as long as the web services should run or the webservice might stop?
-	private final ISongStore songStore;
 	
 	public App() throws Exception {
 
@@ -41,33 +36,30 @@ public class App {
 		LOG_INSTANCE = new Log( logFilePath );
 		LOG_INSTANCE.log("Starting up.");
 
-		assertMusicLibraryDirExists();
-		assertMusicDlDirExists();
+		assertMpdMusicLibraryDirExists();
+		assertMpdMusicDlDirExists();
 
-		final SongStoreForMpd songStoreForMpd = new SongStoreForMpd(
+		final AppParts appParts = new AppPartsForMpd(
+				ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.tmpDirectoryPath() ),
 				ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.mpdMusicLibraryDirectoryPath() ),
 				ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.mpdMusicDownloadDirectoryPath() ),
-				new NaiveIdGenerator(),
-				LOG_INSTANCE);
-		songStore = songStoreForMpd;
-		PLAYBACK_INTERFACE = new MpcPlaybackInterface(
-				ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.tmpDirectoryPath() ),
-				songStoreForMpd,
-				LOG_INSTANCE);
+				LOG_INSTANCE );
+
+		PLAYBACK_INTERFACE = appParts.getPlaybackInterface();
 		PLAYBACK_INTERFACE.verifyIsUp();
 
 		TASK_INTERFACE = new TaskInterface();
 		ENQUEUE_TASK_FACTORY = new DownloadAndEnqueueTaskFactory(
 				LOG_INSTANCE,
 				ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.tmpDirectoryPath() ),
-				songStore,
+				appParts.getSongStore(),
 				PLAYBACK_INTERFACE,
 				ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.mpdMusicDownloadDirectoryPath() ) );
 		webInterface = new WebInterface( config.portListen() );
 
 	}
 
-	private void assertMusicLibraryDirExists() {
+	private void assertMpdMusicLibraryDirExists() {
 		final String dirPath = ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.mpdMusicLibraryDirectoryPath() );
 		final File f = new File( dirPath );
 		if (!f.isDirectory()) {
@@ -77,7 +69,7 @@ public class App {
 		}
 	}
 
-	private void assertMusicDlDirExists() {
+	private void assertMpdMusicDlDirExists() {
 		final String dirPath = ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.mpdMusicDownloadDirectoryPath() );
 		final File f = new File( dirPath );
 		if (!f.isDirectory()) {
