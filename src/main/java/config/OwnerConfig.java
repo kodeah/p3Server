@@ -12,7 +12,7 @@ public interface OwnerConfig extends Config {
     // Global configuration:
     @DefaultValue("6646")
     int portListen();
-    @DefaultValue("/var/log/partyPartyPlaylist/p3Server.log")
+    @DefaultValue(".log/partyPartyPlaylist/p3Server.log")
     String logFilePath();
     @DefaultValue("/tmp")
     String tmpDirectoryPath();

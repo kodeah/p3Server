@@ -10,8 +10,10 @@ public class Log implements ILog {
 
 	public Log( final String logFilePath ) throws IOException {
 		this.logFilePath = logFilePath;
-		if( !new File(logFilePath).exists() ) {
-			new File(logFilePath).createNewFile();
+		final File logFile = new File(logFilePath);
+		if( !logFile.exists() ) {
+			logFile.getParentFile().mkdirs();
+			logFile.createNewFile();
 		}
 	}
 	
