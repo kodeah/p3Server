@@ -17,10 +17,10 @@ public interface AppConfig extends Config {
     String tmpDirectoryPath();
 
     @DefaultValue("/var/lib/mpd/music")
-    String musicLibraryDirectoryPath();
+    String mpdMusicLibraryDirectoryPath();
 
     @DefaultValue("/var/lib/mpd/music/p3-cache")
-    String musicDownloadDirectoryPath();
+    String mpdMusicDownloadDirectoryPath();
 
     @DefaultValue("6646")
     int portListen();

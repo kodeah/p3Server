@@ -41,8 +41,8 @@ public class App {
 		assertMusicDlDirExists();
 
 		songStore = new SongStore(
-				CONFIG.musicLibraryDirectoryPath(),
-				CONFIG.musicDownloadDirectoryPath(),
+				CONFIG.mpdMusicLibraryDirectoryPath(),
+				CONFIG.mpdMusicDownloadDirectoryPath(),
 				new NaiveIdGenerator() );
 		PLAYBACK_INTERFACE = new MpcPlaybackInterface(CONFIG.tmpDirectoryPath(), songStore, LOG_INSTANCE);
 		TASK_INTERFACE = new TaskInterface();
@@ -51,18 +51,18 @@ public class App {
 	}
 
 	private void assertMusicLibraryDirExists() {
-		final File f = new File( CONFIG.musicLibraryDirectoryPath() );
+		final File f = new File( CONFIG.mpdMusicLibraryDirectoryPath() );
 		if (!f.isDirectory()) {
-			LOG_INSTANCE.error("Expected music library at '" + CONFIG.musicLibraryDirectoryPath()
+			LOG_INSTANCE.error("Expected music library at '" + CONFIG.mpdMusicLibraryDirectoryPath()
 					+ "', but there is no directory!");
 			throw new RuntimeException();
 		}
 	}
 
 	private void assertMusicDlDirExists() {
-		final File f = new File( CONFIG.musicDownloadDirectoryPath() );
+		final File f = new File( CONFIG.mpdMusicDownloadDirectoryPath() );
 		if (!f.isDirectory()) {
-			LOG_INSTANCE.error("Expected music download directory at '" + CONFIG.musicDownloadDirectoryPath()
+			LOG_INSTANCE.error("Expected music download directory at '" + CONFIG.mpdMusicDownloadDirectoryPath()
 					+ "', but there is no directory!");
 			throw new RuntimeException();
 		}
