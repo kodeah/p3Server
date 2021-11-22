@@ -1,6 +1,11 @@
 package storage;
 
 import utils.id.IdGenerator;
+import utils.log.ILog;
+import utils.scripts.Script;
+import utils.scripts.ScriptBuilder;
+import utils.scripts.ScriptExecutionResult;
+import utils.scripts.ScriptExecutor;
 
 import java.util.HashMap;
 
@@ -9,13 +14,16 @@ public class SongStoreForMpd implements ISongStore {
 	private final String musicLibPath;
 	private final String dlDirPath;
 	private final IdGenerator idGenerator;
+	private final ILog log;
 
 	private final HashMap<Long, LocalSong> songsById = new HashMap<>();
 
 	public SongStoreForMpd(final String musicLibPath,
 						   final String dlDirPath,
-						   final IdGenerator idGenerator )
+						   final IdGenerator idGenerator,
+						   final ILog log )
 	{
+		this.log = log;
 		if( musicLibPath.endsWith("/") ) {
 			this.musicLibPath = musicLibPath;
 		} else {
@@ -31,9 +39,18 @@ public class SongStoreForMpd implements ISongStore {
 	}
 
 	@Override
-	public synchronized Long addSong( final String path ) {
+	public synchronized Long addSong( final String path ) throws Exception {
 		final Long newId = idGenerator.getFreeId();
 		songsById.put(newId, new LocalSong(newId, path));
+
+		final Script updateScript = new ScriptBuilder()
+				.appendLine("mpc", "update")
+				.toScript();
+		ScriptExecutionResult updateScriptResult = new ScriptExecutor(musicLibPath, log).execute(updateScript);
+		if(!updateScriptResult.success()) {
+			throw new Exception("'mpc update' failed.");
+		}
+
 		return newId;
 
 		//TODO: check if song is there and is a mp3!!!

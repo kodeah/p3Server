@@ -47,7 +47,8 @@ public class App {
 		final SongStoreForMpd songStoreForMpd = new SongStoreForMpd(
 				ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.mpdMusicLibraryDirectoryPath() ),
 				ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.mpdMusicDownloadDirectoryPath() ),
-				new NaiveIdGenerator() );
+				new NaiveIdGenerator(),
+				LOG_INSTANCE);
 		songStore = songStoreForMpd;
 		PLAYBACK_INTERFACE = new MpcPlaybackInterface(
 				ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.tmpDirectoryPath() ),

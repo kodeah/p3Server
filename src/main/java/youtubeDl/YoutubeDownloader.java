@@ -14,8 +14,6 @@ import java.nio.file.Path;
 
 public class YoutubeDownloader {
 
-	private final boolean runMpcUpdate; // TODO Move mpc specific code out of this class
-
 	private final String tmpDirPath;
     private final ILog log;
 	
@@ -30,7 +28,6 @@ public class YoutubeDownloader {
     {
 		this.tmpDirPath = tmpDirPath;
         this.log = log;
-        this.runMpcUpdate = runMpcUpdate;
 	}
 
 	public String downloadFromUrl(
@@ -83,18 +80,6 @@ public class YoutubeDownloader {
 		log.log("Moving song from '" + songPathTmp +
 				"' to '" + songPathTarget + "' (post dl script).");
 		Files.move(Path.of(songPathTmp), Path.of(songPathTarget));
-
-		if (runMpcUpdate) {
-			final Script updateScript = new ScriptBuilder()
-					.appendLine("mpc", "update")
-					.toScript();
-			ScriptExecutionResult updateScriptResult = new ScriptExecutor(tmpDirPath, log).execute(updateScript);
-			log.log(updateScriptResult.output());
-			log.log(updateScriptResult.errors());
-			if(!updateScriptResult.success()) {
-				throw new Exception("'mpc update' failed.");
-			}
-		}
 
 		new File(dlTempDirPath).delete();
 
