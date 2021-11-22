@@ -1,18 +1,18 @@
 package playback;
 
-import storage.SongStore;
+import storage.SongStoreForMpd;
 import utils.WebRequestHelper;
 import utils.log.ILog;
 
 public class VlcPlayback implements INTERFACE_Playback {
 
     private final WebRequestHelper webRequestHelper;
-    private final SongStore songStore;
+    private final SongStoreForMpd songStore;
     private final ILog log;
 
     public VlcPlayback(
             final WebRequestHelper webRequestHelper,
-            final SongStore songStore,
+            final SongStoreForMpd songStore,
             final ILog log )
     {
         this.webRequestHelper = webRequestHelper;

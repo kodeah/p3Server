@@ -1,7 +1,7 @@
 package playback.mpd;
 
 import playback.INTERFACE_Playback;
-import storage.SongStore;
+import storage.SongStoreForMpd;
 import utils.log.ILog;
 import utils.scripts.ScriptBuilder;
 
@@ -12,13 +12,13 @@ implements
 INTERFACE_Playback
 {
 
-	private final SongStore songStore;
+	private final SongStoreForMpd songStore;
 	private final ILog log;
 	private final MpcCommander mpcCommander;
 
 	public MpcPlaybackInterface(
 			final String temporaryBaseDirectory,
-			final SongStore songStore,
+			final SongStoreForMpd songStore,
 			final ILog log
 			) {
 		this.log = log;
@@ -81,7 +81,7 @@ INTERFACE_Playback
 		mpcCommander.fireCommand(new ScriptBuilder()
 				.appendLine("mpc", "update", "--wait")
 				.appendLine("sleep", "1.5")
-				.appendLine("mpc", "add", songStore.getSongPathWithInnerDirPrefix(idSong))
+				.appendLine("mpc", "add", songStore.getSongPath(idSong))
 				.toScript() );
 	}
 	
@@ -90,7 +90,7 @@ INTERFACE_Playback
 		mpcCommander.fireCommand(new ScriptBuilder()
 				.appendLine("mpc", "update", "--wait")
 				.appendLine("sleep", "1.5")
-				.appendLine("mpc", "insert", songStore.getSongPathWithInnerDirPrefix(idSong))
+				.appendLine("mpc", "insert", songStore.getSongPath(idSong))
 				.toScript() );
 	}
 

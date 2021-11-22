@@ -5,7 +5,8 @@ import config.OwnerConfig;
 import org.aeonbits.owner.ConfigFactory;
 import playback.INTERFACE_Playback;
 import playback.mpd.MpcPlaybackInterface;
-import storage.SongStore;
+import storage.ISongStore;
+import storage.SongStoreForMpd;
 import tasks.DownloadAndEnqueueTaskFactory;
 import tasks.TaskInterface;
 import utils.id.NaiveIdGenerator;
@@ -26,7 +27,7 @@ public class App {
 	private final OwnerConfig config;
 	private WebInterface webInterface;
 		//Variable unused, but must be stored as long as the web services should run or the webservice might stop?
-	private final SongStore songStore;
+	private final ISongStore songStore;
 	
 	public App() throws Exception {
 
@@ -43,14 +44,14 @@ public class App {
 		assertMusicLibraryDirExists();
 		assertMusicDlDirExists();
 
-		songStore = new SongStore(
+		final SongStoreForMpd songStoreForMpd = new SongStoreForMpd(
 				ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.mpdMusicLibraryDirectoryPath() ),
 				ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.mpdMusicDownloadDirectoryPath() ),
 				new NaiveIdGenerator() );
-
+		songStore = songStoreForMpd;
 		PLAYBACK_INTERFACE = new MpcPlaybackInterface(
 				ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.tmpDirectoryPath() ),
-				songStore,
+				songStoreForMpd,
 				LOG_INSTANCE);
 		PLAYBACK_INTERFACE.verifyIsUp();
 

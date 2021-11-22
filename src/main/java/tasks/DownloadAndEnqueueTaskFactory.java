@@ -1,7 +1,7 @@
 package tasks;
 
 import playback.INTERFACE_Playback;
-import storage.SongStore;
+import storage.ISongStore;
 import utils.log.ILog;
 import youtubeDl.YoutubeDownloader;
 
@@ -9,14 +9,14 @@ public class DownloadAndEnqueueTaskFactory {
 
     private final ILog log;
     private final YoutubeDownloader youtubeDownloader;
-    private final SongStore downloadStore;
+    private final ISongStore downloadStore;
     private final INTERFACE_Playback playbackInterface;
     private final String downloadDirPath;
 
     public DownloadAndEnqueueTaskFactory(
             final ILog log,
             final String tmpDirPath,
-            final SongStore downloadStore,
+            final ISongStore downloadStore,
             final INTERFACE_Playback playbackInterface,
             final String downloadDirPath )
     {

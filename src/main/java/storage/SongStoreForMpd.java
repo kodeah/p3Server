@@ -4,17 +4,17 @@ import utils.id.IdGenerator;
 
 import java.util.HashMap;
 
-public class SongStore {
+public class SongStoreForMpd implements ISongStore {
 
 	private final String musicLibPath;
 	private final String dlDirPath;
 	private final IdGenerator idGenerator;
-	
+
 	private final HashMap<Long, LocalSong> songsById = new HashMap<>();
-	
-	public SongStore( final String musicLibPath,
-					  final String dlDirPath,
-					  final IdGenerator idGenerator )
+
+	public SongStoreForMpd(final String musicLibPath,
+						   final String dlDirPath,
+						   final IdGenerator idGenerator )
 	{
 		if( musicLibPath.endsWith("/") ) {
 			this.musicLibPath = musicLibPath;
@@ -24,21 +24,23 @@ public class SongStore {
 		this.dlDirPath = dlDirPath;
 		this.idGenerator = idGenerator;
 	}
-	
-	public synchronized LocalSong getSongWithId(final Long id) {
+
+	@Override
+	public synchronized LocalSong getSongWithId( final Long id ) {
 		return songsById.get(id);
 	}
-	
-	public synchronized Long addSong(final String path) {
+
+	@Override
+	public synchronized Long addSong( final String path ) {
 		final Long newId = idGenerator.getFreeId();
 		songsById.put(newId, new LocalSong(newId, path));
 		return newId;
-	
-	//TODO: check if song is there and is a mp3!!!
+
+		//TODO: check if song is there and is a mp3!!!
 	}
 
-	public String getSongPathWithInnerDirPrefix(Long idSong) throws Exception {
-		final LocalSong song = getSongWithId(idSong);
+	public String getSongPath( final Long songId ) throws Exception {
+		final LocalSong song = getSongWithId(songId);
 		final String songPathFull = song.localPath();
 		if( songPathFull.indexOf( musicLibPath ) != 0 ){
 			throw new Exception("Expecting song path at " + songPathFull + " to start with: " + musicLibPath);
@@ -46,5 +48,5 @@ public class SongStore {
 		final String songPathInLibrary = songPathFull.substring( musicLibPath.length() );
 		return songPathInLibrary;
 	}
-	
+
 }
