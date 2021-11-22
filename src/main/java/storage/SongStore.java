@@ -46,9 +46,5 @@ public class SongStore {
 		final String songPathInLibrary = songPathFull.substring( musicLibPath.length() );
 		return songPathInLibrary;
 	}
-
-	public synchronized String getStorageDirPath() {
-		return dlDirPath;
-	}
 	
 }

@@ -59,7 +59,8 @@ public class App {
 				LOG_INSTANCE,
 				ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.tmpDirectoryPath() ),
 				songStore,
-				PLAYBACK_INTERFACE);
+				PLAYBACK_INTERFACE,
+				ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.mpdMusicDownloadDirectoryPath() ) );
 		webInterface = new WebInterface( config.portListen() );
 
 	}
