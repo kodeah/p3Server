@@ -1,11 +1,11 @@
-package app;
+package config;
 
 import org.aeonbits.owner.Config;
 
 @Config.LoadPolicy(Config.LoadType.MERGE)
 @Config.Sources({
         "file:~/.config/partyPartyPlaylist/p3Server.config"})
-public interface AppConfig extends Config {
+public interface OwnerConfig extends Config {
     // Usage hints:
     // http://owner.aeonbits.org/docs/usage/
 
