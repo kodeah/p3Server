@@ -12,8 +12,10 @@ if [ $(grep ^music_directory /etc/mpd.conf | grep -F "/var/lib/mpd/music" | wc -
 		sudo chown mpd:audio /var/lib/mpd/music/p3-cache
 	fi
 	sudo chmod 777 /var/lib/mpd/music/p3-cache
+	echo "Done setting up music library/download folder."
+	echo ""
 else
-  echo ""
-  echo "### PLEASE READ THE FOLLOWING ###"
+	echo ""
+	echo "### PLEASE READ THE FOLLOWING ###"
 	echo "Setup nearly finished. To make everything work, you should create a music download folder and make it writable by the user which you intend to run this program. For more information regarding the download folder, see the README file."
 fi
