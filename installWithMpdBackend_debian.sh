@@ -2,7 +2,7 @@
 set -eu
 
 tasks/installDependenciesForMpdPlayback.sh
-tasks/installYoutubeDl.sh
+tasks/installYtDlp.sh
 tasks/build.sh
 tasks/setupMpdDefaultMusicLib.sh
 tasks/writeConfigForMpdBackend.sh

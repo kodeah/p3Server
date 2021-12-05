@@ -1,5 +1,6 @@
 package youtubeDl;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import utils.log.PrintLog;
 
@@ -11,11 +12,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class YoutubeDownloaderTest {
 
 	@Test
-	public void test() {
+	@Disabled
+	public void testWithYtDlp() {
 
 		final String songDirPath = "/tmp/youtubeDlTest83745643747";
 
 		YoutubeDownloader ytdl = new YoutubeDownloader(
+				"yt-dlp",
 				"/tmp",
 				songDirPath,
 				new PrintLog() );

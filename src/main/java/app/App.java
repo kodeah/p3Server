@@ -72,6 +72,7 @@ public class App {
 		TASK_INTERFACE = new TaskInterface();
 		ENQUEUE_TASK_FACTORY = new DownloadAndEnqueueTaskFactory(
 				LOG_INSTANCE,
+				config.youtubeDownloaderApplication(),
 				ConfigPathUtil.getCompletePathFromPerhapsRelativePath( config.tmpDirectoryPath() ),
 				downloadTargetDir,
 				appParts.getSongStore(),

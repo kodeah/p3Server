@@ -29,6 +29,12 @@ public interface OwnerConfig extends Config {
         // Possible values are: "mpd", "vlc"
         // Depending on which one you set, from the following values only the ones prefixed with mpd/vlc are used
 
+    // Select youtube downloader
+    @DefaultValue("yt-dlp")
+    String youtubeDownloaderApplication();
+        // Possible values are: "youtube-dl", "yt-dlp", and all other programs that provide a comand line interface
+        // sufficiently similar to youtube-dl.
+
     // VLC specific configuration:
     @DefaultValue("Downloads/p3-cache")
     String vlcMusicDownloadDirectoryPath();

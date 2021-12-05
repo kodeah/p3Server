@@ -14,6 +14,7 @@ import java.nio.file.Path;
 
 public class YoutubeDownloader {
 
+	private final String ytdlProgramName;
 	private final String tmpDirPath;
 	private final String dlTargetDirPath;
     private final ILog log;
@@ -23,10 +24,12 @@ public class YoutubeDownloader {
 	//but to identify songs from different downloads.
 	
 	public YoutubeDownloader(
+			final String ytdlProgramName,
 	        final String tmpDirPath,
             final String dlTargetDirPath,
             final ILog log )
     {
+		this.ytdlProgramName = ytdlProgramName;
 		this.tmpDirPath = tmpDirPath;
 		this.dlTargetDirPath = dlTargetDirPath;
         this.log = log;
@@ -45,7 +48,7 @@ public class YoutubeDownloader {
 
 		new File(dlTempDirPath).mkdir();
 		final Script dlScript = new ScriptBuilder()
-				.appendLine("youtube-dl",
+				.appendLine(ytdlProgramName,
 						"--extract-audio",
 						"--audio-format", "mp3",
 						"--restrict-filenames",
