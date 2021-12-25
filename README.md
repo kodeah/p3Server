@@ -5,7 +5,7 @@ The p3Server (party party playlist server) is an extension to [MPD, the music pl
 
 This application is intended to be executed parallel to a running MPD or VLC instance.
 
-At the moment, there is only an [Android Client](https://gitlab.com/kodeah/p3AndroidClient) available. However, you can use any HTTP client (httpie, curl, ...) to talk to the web interface (see below). Also feel free to write your own clients. I plan to release a desktop client as well soon.
+At the moment, there is only an Android client available([gitlab](https://gitlab.com/kodeah/p3AndroidClient)/[github](https://github.com/kodeah/p3AndroidClient)). However, you can use any HTTP client (httpie, curl, ...) to talk to the web interface (see below). Also feel free to write your own clients. I plan to release a desktop client as well soon.
 
 
 # = Build / Installation =
@@ -17,7 +17,7 @@ To setup the environment, install dependencies and build the project, you can si
 * ``installWithVlcBackend_debian.sh``
 * ``installWithMpdBackend_debian.sh``
 
-Note that these scripts execute commands with sudo as well as download youtube-dl from the official youtube-dl site, which is **NOT part of the official debian repositories**. Only do this at your own risk!
+Note that these scripts execute commands with sudo as well as download and install yt-dlp, which is **NOT part of the official debian repositories**. Only do this at your own risk!
 
 ## Run the Application
 
@@ -37,9 +37,9 @@ Java 16 is required to build and run this application.
 In addition, the following programs are required for this application to work properly:
 * Either [MPD](https://www.musicpd.org/download.html) and [mpc](https://www.musicpd.org/clients/mpc/)
 * Or [VLC](https://www.videolan.org/)
-* In any case [youtube-dl](https://ytdl-org.github.io/youtube-dl/)
+* [yt-dlp](https://github.com/yt-dlp/yt-dlp)
 
-youtube-dl (and, if using the MPD/mpc backend, also mpc) has to be accessible via your PATH variable.
+yt-dlp (and, if using the MPD/mpc backend, also mpc) has to be accessible via your PATH variable.
 
 Note that further dependencies are downloaded via maven on building the application.
 
